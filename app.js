@@ -40,12 +40,14 @@ for (arg of process.argv) {
     } else if (arg.startsWith('--dest')) {
         remoteHost = arg.substring(7).split(':')
     } else if (arg.startsWith('--secret')) {
-        iv = password = arg.substring(9);
+        const passwords = arg.substring(9).split(':');
+        password = passwords[0];
+        iv = passwords[1];
     }
 }
 
 if (!selfHost || !remoteHost || !iv) {
-    console.log("Example : whisp --src=<host:port> --dest=<host:port> --secret=<password>")
+    console.log("Example : node app.js --src=<host:port> --dest=<host:port> --secret=<password1:password2>")
     return process.exit(0);
 }
 
@@ -158,7 +160,7 @@ class Client {
         }
         client.on('end', () => {
             console.log('Disconnected\n');
-            retry();
+            process.exit(0);
         });
         client.on('error', (err) => {
             retry();
