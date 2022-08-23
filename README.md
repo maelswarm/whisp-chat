@@ -1,0 +1,2 @@
+# whisp
+Lightweight Messaging CLI
