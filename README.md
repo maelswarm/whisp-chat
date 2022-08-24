@@ -23,6 +23,7 @@ NOTE: This tool has not been audited and is NOT for production use.
 * zip option for file transfer
 * prettier UI  
 * choice of encryption method
+* choice of download location
 
 ## Prerequisites
 
@@ -54,5 +55,7 @@ Type text and hit enter.
 
 For sending a file type ```!file:<filepath>``` and hit enter.  
 
-NOTE: Do not expect a chat message to be received by the destination while a file transfer is already occuring.  
-It will be received by the destination after the file transfer.
+Do not expect a chat message to be received by the destination while a file transfer is already occuring.  
+It will be received by the destination after the file transfer.  
+
+Files are downloaded into your home directory downloads. 
