@@ -65,7 +65,6 @@ class Server {
                     iv = mess.split('::')[1];
                 } else if (mess.startsWith('!file:')) {
                     const file = JSON.parse(mess.substring(mess.indexOf('!file:') + 6));
-                    console.log(require('os').homedir())
                     fs.writeFileSync(`${require('os').homedir()}/Downloads/${(new Date()).getTime()}-${file.name}`, file.data);
                     process.stdout.moveCursor(0, -1);
                     process.stdout.cursorTo(0)
