@@ -44,7 +44,7 @@ Terminal 1:
 ```node app.js --src=127.0.0.1:4321 --dest=127.0.0.1:1234 --secret=breadandjam:butterybutter```
 
 Terminal 2:  
-```node app.js --src=127.0.0.1:4321 --dest=127.0.0.1:1234 --secret=breadandjam:butterybutter```
+```node app.js --src=127.0.0.1:1234 --dest=127.0.0.1:4321 --secret=breadandjam:butterybutter```
 
 ## Usage
 
