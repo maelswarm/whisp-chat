@@ -1,7 +1,7 @@
 # whisp-chat
 <p align-center>Encrypted Messaging CLI</p>
 
-## Prerequesites
+## Prerequisites
 
 Install <a href="https://nodejs.org/en/download/">node.js</a>
 
