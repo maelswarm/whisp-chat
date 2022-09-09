@@ -1,6 +1,8 @@
 const crypto = require('node:crypto');
 let password = ''
 let iv = '';
+let dhKey = '';
+let dh = null, s = null, cc = null;
 const generateVector = (pwd) => {
     return crypto.scryptSync(pwd, 'salt', 16);
 }
@@ -72,6 +74,21 @@ class Server {
                     process.stdout.write('Downloaded: ' + file.name + '\n');
                     process.stdout.moveCursor(0, 1);
                     process.stdout.write(input);
+                } else if (mess.startsWith('DH-KEY-SEND::')) {
+                    setTimeout(async () => {
+                        dhKey = mess.split('::')[1];
+                        let prime = Buffer.from(mess.split('::')[1].split('-')[0], 'hex');
+                        let gen = Buffer.from(mess.split('::')[1].split('-')[1], 'hex');
+                        let key = Buffer.from(mess.split('::')[1].split('-')[2], 'hex');
+                        dh = crypto.createDiffieHellman(prime, gen);
+                        let myKey = dh.generateKeys();
+                        const message = await encryptMessage("DH-KEY-ACK::" + myKey.toString('hex'));
+                        cc.client.write(message);
+                        iv = generateVector(dh.computeSecret(key));
+                    },0);
+                } else if (mess.startsWith('DH-KEY-ACK::')) {
+                    const key = Buffer.from(mess.split('::')[1], 'hex');
+                    iv = generateVector(dh.computeSecret(key));
                 } else {
                     process.stdout.moveCursor(0, -1);
                     process.stdout.cursorTo(0)
@@ -85,7 +102,7 @@ class Server {
         server.on('error', (err) => {
             throw err;
         });
-        server.listen(selfHost[1], selfHost[0], () => {});
+        server.listen(selfHost[1], selfHost[0], () => { });
     }
 }
 
@@ -95,18 +112,20 @@ class Client {
         this.init();
     }
     init() {
-        const client = net.createConnection({ port: remoteHost[1], host: remoteHost[0] }, () => {
+        this.client = net.createConnection({ port: remoteHost[1], host: remoteHost[0] }, () => {
             console.log("Connected\n");
             process.stdin.setRawMode(true);
             process.stdin.resume();
             process.stdin.setEncoding('utf8');
             if (parseInt(remoteHost[1]) < parseInt(selfHost[1]) || parseInt(remoteHost[1]) < 1 + parseInt(selfHost[1])) {
                 const refreshIV = async () => {
-                    const newIV = [...Array(32)].map(() => Math.random().toString(36)[2]).join('');
-                    const message = await encryptMessage("IV::" + newIV);
-                    client.write(message);
-                    iv = newIV;
-                    setTimeout(refreshIV, Math.random() * 10000 + 10000);
+                    dh = crypto.createDiffieHellman(2048);
+                    const prime = dh.getPrime();
+                    const gen = dh.getGenerator();
+                    const key = dh.generateKeys();
+                    const message = await encryptMessage(`DH-KEY-SEND::${prime.toString('hex')}-${gen.toString('hex')}-${key.toString('hex')}`);
+                    this.client.write(message);
+                    setTimeout(refreshIV, Math.random() * 10000 + 30000);
                 }
                 refreshIV();
             }
@@ -118,12 +137,12 @@ class Client {
                         const path = input.substring(input.indexOf('!file:') + 6);
                         try {
                             const file = { name: path.substring(path.lastIndexOf('/') + 1), data: fs.readFileSync(path).toString() };
-                            client.write(await encryptMessage('!file:' + JSON.stringify(file)));
+                            this.client.write(await encryptMessage('!file:' + JSON.stringify(file)));
                         } catch {
                             process.stdout.write('\ninvalid file path\n');
                         }
                     } else {
-                        client.write(await encryptMessage(input.toString()));
+                        this.client.write(await encryptMessage(input.toString()));
                     }
                     process.stdout.write('\n');
                     input = '';
@@ -157,15 +176,15 @@ class Client {
                 this.init();
             }, 2500);
         }
-        client.on('end', () => {
+        this.client.on('end', () => {
             console.log('Disconnected\n');
             process.exit(0);
         });
-        client.on('error', (err) => {
+        this.client.on('error', (err) => {
             retry();
         });
     }
 }
 
-new Server();
-new Client();
+s = new Server();
+cc = new Client();
