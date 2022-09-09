@@ -20,6 +20,7 @@ NOTE: This tool has not been audited and is NOT for production use.
 
 ## Roadmap
 
+* Diffie-Hellman
 * zip option for file transfer
 * prettier UI  
 * choice of encryption method
