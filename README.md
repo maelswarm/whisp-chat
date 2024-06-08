@@ -4,7 +4,7 @@
 
 ## Design Principles
 
-Simplicity in implementation -- ~/170 lines of code.  
+Simplicity in implementation -- ~170 lines of code.  
 Simplicity in usage.
 
 ## Why should I use this?
