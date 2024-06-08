@@ -40,6 +40,8 @@ These will be used for the AES-256-cfb cipher (used to secure the given parties 
 Command Schema  
 ```node app.js --src=<host>:<port> --dest=<destinationhost>:<destinationport> --secret=<password1>:<password2>```
 
+## Usage
+
 For a quick test, open two terminals on your computer and enter the following commands.
 
 Terminal 1:  
@@ -47,10 +49,6 @@ Terminal 1:
 
 Terminal 2:  
 ```node app.js --src=127.0.0.1:1234 --dest=127.0.0.1:4321 --secret=breadandjam:butterybutter```
-
-## Usage
-
-![Screen Shot 2022-08-24 at 11 00 06 AM](https://user-images.githubusercontent.com/6314185/186452780-ff7b337b-653c-4d32-9db6-d2915adcc5a2.png)
 
 Type text and hit enter.
 
