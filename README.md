@@ -10,7 +10,7 @@ Simplicity in usage.
 ## Why should I use this?
 
 Overall, this is a tutorial example for those interested in a node.js/encryption/sockets.  
-It's not a "serious" project (at least not yet -- feature requests and contributions are more than welcome).
+Feature requests and contributions are more than welcome.
 
 ## Is this software really secure?
 
